@@ -1,0 +1,21 @@
+{
+    "prefix": "!",
+    "databaseUri": "postgresql://postgres:postgres@localhost:5432/postgres",
+    "discord": {
+        "token": ""
+    },
+    "telegram": {
+        "token": ""
+    },
+    "slack": {
+        "rtm_token": "",
+        "web_token": ""
+    },
+    "irc": {
+        "url": "",
+        "nick": "",
+        "channels": [
+            ""
+        ]
+    }
+}
