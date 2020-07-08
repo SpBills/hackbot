@@ -1,16 +1,19 @@
-require_init = function (name, bot) { return require(name).init(bot); }
+const discord = require("./modules/discord.js");
+const irc = require("./modules/irc.js");
+const slack = require("./modules/slack.js");
+const telegram = require("./modules/telegram.js");
 
 function Hackbot() {
     this.config = require("./config.json");
-    this.db = require_init("./modules/db.js", this);
-    this.context = require("./modules/context.js", this);
+    this.db = require("./modules/db.js").init(this);
+    this.context = require("./modules/context.js");
 
-    this.discord = require_init("./modules/discord.js", this);
-    this.irc = require_init("./modules/irc.js", this);
-    this.slack = require_init("./modules/slack.js", this);
-    this.telegram = require_init("./modules/telegram.js", this);
+    this.discord = new discord(this);
+    this.irc = new irc(this);
+    this.slack = new slack(this);
+    this.telegram = new telegram(this);
 
-    this.commands = {},
+    this.commands = {};
 
     this.init = function() {
         try {
@@ -26,10 +29,9 @@ function Hackbot() {
     this.on = async function(type, args) {
         switch(type) {
             case "message": {
-                console.log(JSON.stringify(args, null, 2));
                 ctx = new this.context(this, args);
-                //command = await ctx.findCommand();
-                //if (command) await command.execute(ctx);
+                command = await ctx.findCommand();
+                if (command) await command.execute(ctx);
                 break;
             }
             case "error": { console.log(`ERROR from ${args.source}: ${JSON.stringify(args.msg, null, 2)}`); break; }
