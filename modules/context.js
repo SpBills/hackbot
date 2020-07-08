@@ -6,12 +6,13 @@ module.exports = function MessageContext(bot, args) {
     this.location = args.location;
 
     this.findCommand = async function() {
-        if (this.message.startsWith(bot.config.prefix))
-            return this.bot.commands[message.content.substring(bot.config.prefix.length)];
+        if (this.message.startsWith(bot.config.prefix)) {
+            this.args = message.content.slice(bot.config.prefix.length).split(" ");
+            return this.bot.commands[this.args.shift()];
+        }
     }
 
     this.reply = async function(message) {
-        console.log(this.platform)
         this.bot[this.platform].sendMessage(this.location, message);
     }
     return this;

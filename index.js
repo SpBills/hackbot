@@ -8,24 +8,6 @@ function Hackbot() {
     this.db = require("./modules/db.js").init(this);
     this.context = require("./modules/context.js");
 
-    this.discord = new discord(this);
-    this.irc = new irc(this);
-    this.slack = new slack(this);
-    this.telegram = new telegram(this);
-
-    this.commands = {};
-
-    this.init = function() {
-        try {
-            require("fs").readdirSync("./commands").forEach(file => {
-                bot.commands[file.slice(0, -3)] = require(`./commands/${file}`);
-            });
-            this.on('info', { msg: "Succesfully loaded commands.", source: 'bot' });
-        } catch (e) {
-            this.on('err', { msg: `Could not load commands: ${e}`, source: 'bot' });
-        };
-    };
-
     this.on = async function(type, args) {
         switch(type) {
             case "message": {
@@ -38,7 +20,27 @@ function Hackbot() {
             case "info": { console.log(`INFO from ${args.source}: ${JSON.stringify(args.msg, null, 2)}`); break; }
         }
     };
+
+    this.commands = {};
+
+    try {
+        require("fs").readdirSync("./commands").forEach(file => {
+            this.commands[file.slice(0, -3)] = require(`./commands/${file}`);
+        });
+        this.on('info', { msg: "Succesfully loaded commands.", source: 'bot' });
+    } catch (e) {
+        this.on('error', { msg: `Could not load commands: ${e}`, source: 'bot' });
+    };
+
+    this.discord = new discord(this);
+    this.irc = new irc(this);
+    this.slack = new slack(this);
+    this.telegram = new telegram(this);
+
 }
 
-bot = new Hackbot()
-bot.init()
+process.on('unhandledRejection', error => {
+	console.error('Unhandled promise rejection:', error);
+});
+
+bot = new Hackbot();

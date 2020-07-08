@@ -2,20 +2,32 @@
     "prefix": "!",
     "databaseUri": "postgresql://postgres:postgres@localhost:5432/postgres",
     "discord": {
-        "token": ""
+        "token": "",
+        "owners": [
+
+        ]
     },
     "telegram": {
-        "token": ""
+        "token": "",
+        "owners": [
+
+        ]
     },
     "slack": {
         "rtm_token": "",
-        "web_token": ""
+        "web_token": "",
+        "owners": [
+
+        ]
     },
     "irc": {
         "url": "",
         "nick": "",
         "channels": [
-            ""
+
+        ],
+        "owners": [
+
         ]
     }
 }
