@@ -13,7 +13,7 @@ function Hackbot() {
             case "message": {
                 ctx = new this.context(this, args);
                 command = await ctx.findCommand();
-                if (command) await command.execute(ctx);
+                if (command && command.permitted(ctx)) await command.execute(ctx);
                 break;
             }
             case "error": { console.log(`ERROR from ${args.source}: ${JSON.stringify(args.msg, null, 2)}`); break; }
