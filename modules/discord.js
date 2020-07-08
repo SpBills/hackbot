@@ -1,7 +1,7 @@
 const eris = require("eris");
 
 module.exports = function DiscordClient(bot) {
-    this.webhook_cache = {};
+    this.webhookCache = {};
     this.bot = bot;
     this.client = new eris(this.bot.config.discord.token, {intents: ["guilds", "guildMessages", "directMessages",]});
     this.client.on('ready', () => this.bot.on('info', { msg: "Discord gateway client connected.", source: 'discord' }));
@@ -19,21 +19,19 @@ module.exports = function DiscordClient(bot) {
     this.client.connect().then();
     this.sendMessage = async (location, message) => await this.client.createMessage(location, message),
     this.proxyMessage = async function(proxyInfo) {
-        // webhooks!
         webhook = await this.getWebhook(proxyInfo.location);
-        console.log(webhook);
         options = {content: proxyInfo.message, username: proxyInfo.author, avatarURL: proxyInfo.avatar, allowedMentions: {everyone: false}};
         await this.client.executeWebhook(webhook.id, webhook.token, options);
     };
     this.getWebhook = async function(channel) {
-        webhook = this.webhook_cache[channel];
+        webhook = this.webhookCache[channel];
         if (!webhook) {
             webhook = (await this.client.getChannelWebhooks(channel))[0];
-            this.webhook_cache[channel] = { id: webhook.id, token: webhook.token };
+            this.webhookCache[channel] = { id: webhook.id, token: webhook.token };
         }
         if (!webhook) {
             webhook = await this.client.createChannelWebhook(channel, {name: "hackbot proxy webhook"});
-            this.webhook_cache[channel] = { id: webhook.id, token: webhook.token };
+            this.webhookCache[channel] = { id: webhook.id, token: webhook.token };
         }
         return webhook;
     }
