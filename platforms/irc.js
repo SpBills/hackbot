@@ -24,8 +24,8 @@ module.exports = function ircClient(bot) {
     this.client.addListener('error', async (message) => await bot.on('error', { msg: message, source: 'irc' }));
     this.client.addListener('motd', async (motd) => bot.on('info', { msg: "IRC client connected.", source: "IRC" }));
     
-    this.sendMessage = async (location, message) => await this.client.say(location, message);
-    this.proxyMessage = async (proxyInfo) => await this.client.say(proxyInfo.location, `[proxy] ${proxyInfo.author}: ${proxyInfo.message}`);
+    this.sendMessage = async (location, message) => await this.client.say(location, message.replace("\n", " "));
+    this.proxyMessage = async (proxyInfo) => await this.client.say(proxyInfo.location, `[proxy] ${proxyInfo.author.name}: ${proxyInfo.message.replace("\n", " ")}`);
 
     this.client.connect();
     return this;

@@ -36,8 +36,8 @@ module.exports = function SlackClient(bot) {
         channel: proxyInfo.location,
         text: proxyInfo.message,
         as_user: false,
-        username: proxyInfo.author,
-        icon_url: proxyInfo.avatar,
+        username: proxyInfo.author.name,
+        icon_url: proxyInfo.author.avatar,
       });
     }
     return this;

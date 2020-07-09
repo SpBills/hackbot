@@ -25,14 +25,14 @@ module.exports = function DiscordClient(bot) {
     this.sendMessage = async (location, message) => await this.client.createMessage(location, message),
     this.proxyMessage = async function(proxyInfo) {
         webhook = await this.getWebhook(proxyInfo.location);
-        options = {content: proxyInfo.message, username: proxyInfo.author, avatarURL: proxyInfo.avatar, allowedMentions: {everyone: false}};
+        options = {content: proxyInfo.message, username: proxyInfo.author.name, avatarURL: proxyInfo.author.avatar, allowedMentions: {everyone: false}};
         await this.client.executeWebhook(webhook.id, webhook.token, options);
     };
     this.getWebhook = async function(channel) {
         webhook = this.webhookCache[channel];
         if (!webhook) {
             webhook = (await this.client.getChannelWebhooks(channel))[0];
-            this.webhookCache[channel] = { id: webhook.id, token: webhook.token };
+            if (webhook) this.webhookCache[channel] = { id: webhook.id, token: webhook.token };
         }
         if (!webhook) {
             webhook = await this.client.createChannelWebhook(channel, {name: "hackbot proxy webhook"});
