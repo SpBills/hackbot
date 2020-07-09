@@ -10,6 +10,7 @@ module.exports = function ProxyService(bot) {
         if (q.rows) return q.rows.pop();
     }
     this.createLink = async (proxySource) => {
+        if (await this.getLinkFromLocation(proxySource)) throw { msg: 'This location is already part of a link.', send: true, };
         q = await this.bot.db.query(`insert into links (id, ${proxySource.platform}) values (linkuid(), $1) returning *`, [proxySource.location]);
         if (q.rows) return q.rows.pop();
     };
