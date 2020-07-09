@@ -1,19 +1,20 @@
-const discord = require("./modules/discord.js");
-const irc = require("./modules/irc.js");
-const slack = require("./modules/slack.js");
-const telegram = require("./modules/telegram.js");
+const sentry = require('@sentry/node');
+const fs = require("fs");
 
-function Hackbot() {
+async function Hackbot() {
     this.config = require("./config.json");
-    this.db = require("./modules/db.js").init(this);
+    sentry.init({ dsn: this.config.sentryDsn });
+
+    this.db = await (require("./modules/db.js"))(this);
     this.context = require("./modules/context.js");
+    this.proxy = new (require("./modules/proxy.js"))(this);
 
     this.on = async function(type, args) {
         switch(type) {
             case "message": {
                 ctx = new this.context(this, args);
                 command = await ctx.findCommand();
-                if (command && command.permitted(ctx)) await command.execute(ctx);
+                if (command) await ctx.execute(command);
                 break;
             }
             case "error": { console.log(`ERROR from ${args.source}: ${JSON.stringify(args.msg, null, 2)}`); break; }
@@ -21,21 +22,27 @@ function Hackbot() {
         }
     };
 
+    // load commands
     this.commands = {};
-
     try {
-        require("fs").readdirSync("./commands").forEach(file => {
-            this.commands[file.slice(0, -3)] = require(`./commands/${file}`);
+        fs.readdirSync("./commands").forEach(f => {
+            this.commands[f.slice(0, -3)] = require(`./commands/${f}`);
         });
         this.on('info', { msg: "Succesfully loaded commands.", source: 'bot' });
     } catch (e) {
         this.on('error', { msg: `Could not load commands: ${e}`, source: 'bot' });
     };
 
-    this.discord = new discord(this);
-    this.irc = new irc(this);
-    this.slack = new slack(this);
-    this.telegram = new telegram(this);
+    // load platforms
+    this.platforms = {};
+    try {
+        fs.readdirSync("./platforms").forEach(name => {
+            this.platforms[name.slice(0, -3)] = new (require(`./platforms/${name}`))(this);
+        });
+        this.on('info', { msg: "Succesfully loaded platforms.", source: 'bot' });
+    } catch (e) {
+        this.on('error', { msg: `Could not load platforms: ${e}`, source: 'bot' });
+    };
 
 }
 
@@ -43,4 +50,4 @@ process.on('unhandledRejection', error => {
 	console.error('Unhandled promise rejection:', error);
 });
 
-bot = new Hackbot();
+bot = Hackbot();

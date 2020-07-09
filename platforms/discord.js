@@ -8,12 +8,17 @@ module.exports = function DiscordClient(bot) {
     this.client.on('messageCreate', (msg) => {
         message = {
             platform: "discord",
+            author: {
+                id: msg.author.id,
+                name: msg.author.username,
+                avatar: `https://cdn.discordapp.com/avatars/${msg.author.id}/${msg.author.avatar}.png`,
+            },
             content: msg.content,
             location: msg.channel.id,
             private: false,
         };
         if (!msg.guildID) message.private = true;
-        this.bot.on('message', message);
+        if (!msg.author.bot) this.bot.on('message', message);
     });
     this.client.on('error', (err) => this.bot.on('error', { msg: err, source: 'discord' }));
     this.client.connect().then();

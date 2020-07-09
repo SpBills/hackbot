@@ -7,9 +7,19 @@ module.exports = function SlackClient(bot) {
     this.http.on(WebClientEvent.RATE_LIMITED, async (seconds) => await this.bot.on('error', {msg: `Hit Slack Web Rate-limit. Will retry in ${seconds} seconds...`, source: 'slack'}));
     this.client = new RTMClient(bot.config.slack.rtm_token);
     this.client.on('message', async (event) => {
+      if (event.subtype == "bot_message") return;
+      try {
+        author_info = await this.http.users.info({ user: event.user });
+      } catch(e) {
+        console.log(JSON.stringify(event) + e);
+      }
       message = {
         platform: "slack",
-        author: event.user,
+        author: {
+          id: event.user,
+          name: author_info.user.name,
+          avatar: author_info.user.profile.image_original,
+        },
         content: event.text,
         location: event.channel,
         private: false,
@@ -30,4 +40,5 @@ module.exports = function SlackClient(bot) {
         icon_url: proxyInfo.avatar,
       });
     }
+    return this;
 }

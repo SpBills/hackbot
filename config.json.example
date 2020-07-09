@@ -1,6 +1,7 @@
 {
     "prefix": "!",
     "databaseUri": "postgresql://postgres:postgres@localhost:5432/postgres",
+    "sentryDsn": "",
     "discord": {
         "token": "",
         "owners": [

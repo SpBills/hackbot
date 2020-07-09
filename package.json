@@ -4,12 +4,13 @@
   "description": "Hacklab.TO Community Bot",
   "main": "index.js",
   "dependencies": {
-    "pg": "^8.2.1",
+    "@sentry/node": "^5.19.1",
+    "@slack/rtm-api": "^5.0.5",
+    "@slack/web-api": "^5.10.0",
     "eris": "^0.13.3",
     "irc": "^0.5.2",
     "node-telegram-bot-api": "^0.50.0",
-    "@slack/rtm-api": "^5.0.5",
-    "@slack/web-api": "^5.10.0"
+    "pg": "^8.2.1"
   },
   "devDependencies": {},
   "scripts": {

@@ -6,7 +6,11 @@ module.exports = function TelegramClient(bot) {
     this.client.on('message', async (msg) => {
       message = {
         platform: "telegram",
-        author: msg.from.id,
+        author: {
+          id: msg.from.id,
+          name: msg.from.first_name,
+          avatar: null, // TODO: find some way of linking to files without exposing our bot token to everyone. Maybe a small HTTP proxy?
+        },
         content: msg.text,
         location: msg.chat.id,
         private: false,
