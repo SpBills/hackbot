@@ -14,21 +14,23 @@ module.exports = function ProxyService(bot) {
         if (q.rows) return q.rows.pop();
     };
     this.joinLink = async function(proxySource, id) {
-        if (!await this.getLinkFromId(id)) throw { msg: 'The link ID is not valid', send: true, };
+        if ((await this.getLinkFromId(id)) == null) throw { msg: 'The link ID is not valid', send: true, };
         if (await this.getLinkFromLocation(proxySource)) throw { msg: 'This location is already part of a link.', send: true, };
         q = await this.bot.db.query(`update links set ${proxySource.platform} = $1 where id = $2 returning *`, [proxySource.location, id]);
         if (q.rows) return q.rows.pop();
     }
     this.proxyMessage = async function(proxySource) {
+        let originalPlatform = proxySource.platform;
         link = await this.getLinkFromLocation(proxySource);
         if (!link) return;
-        link.keys.forEach(async (key) => { 
-            if (!key == "id" && !key == proxySource.platform) {
-                cur = proxySource;
+        for await (key of Object.keys(link)) { 
+            if (!(key == "id" || link[key] == null)) {
+                let cur = Object.assign({}, proxySource);
                 cur.location = link[key];
-                await this.bot[key].proxyMessage(cur);
+                cur.platform = key;
+                if (originalPlatform != cur.platform) await this.bot.platforms[key].proxyMessage(cur);
             }
-        });
+        };
     }
     return this;
 }
