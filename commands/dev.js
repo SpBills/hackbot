@@ -2,7 +2,7 @@ const util = require("util");
 
 module.exports = {
     description: "Developer only commands.",
-    permitted: (ctx) => ctx.bot.config[ctx.platform].owners.includes(ctx.author.id),
+    permitted: (ctx) => ctx.bot.config[ctx.platform].owners.includes(ctx.author.id.toString()),
     name: "dev",
     execute: async (ctx) => {
         switch (ctx.args.shift()) {
