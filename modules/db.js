@@ -43,7 +43,5 @@ module.exports = async function(bot) {
     this.pool = new pg.Pool({connectionString: bot.config.databaseUri});
     await this.pool.connect();
     await this.pool.query(db_init);
-
-    this.query = async (queryString, args) => await this.pool.query(queryString, args);
-    return this;
+    return this.pool;
 }
