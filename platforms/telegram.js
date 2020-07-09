@@ -21,7 +21,7 @@ module.exports = function TelegramClient(bot) {
     this.client.on('poll', async (msg) => { if (!this.sentReady) { await bot.on('info', { msg: "Telegram client started polling.", source: 'telegram' }); this.sentReady = true; }});
 
     this.sendMessage = async (location, message) => await this.client.sendMessage(location, message);
-    this.proxyMessage = async (proxyInfo) => await this.client.sendMessage(proxyInfo.location, `[proxy] ${proxyInfo.author.name}: ${proxyInfo.message}`);
+    this.executeLink = async (linkInfo) => await this.client.sendMessage(linkInfo.location, `[link] ${linkInfo.author.name}: ${linkInfo.message}`);
 
     return this;
 }

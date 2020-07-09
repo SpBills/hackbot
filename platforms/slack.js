@@ -31,13 +31,13 @@ module.exports = function SlackClient(bot) {
     this.client.on('ready', async () => await this.bot.on('info', { msg: "Slack RTM client connected.", source: 'slack' }));
     this.client.start().then();
     this.sendMessage = async (location, message) => await this.http.chat.postMessage({ channel: location, text: message, }),
-    this.proxyMessage = async function(proxyInfo) {
+    this.executeLink = async function(linkInfo) {
       await this.http.chat.postMessage({
-        channel: proxyInfo.location,
-        text: proxyInfo.message,
+        channel: linkInfo.location,
+        text: linkInfo.message,
         as_user: false,
-        username: proxyInfo.author.name,
-        icon_url: proxyInfo.author.avatar,
+        username: linkInfo.author.name,
+        icon_url: linkInfo.author.avatar,
       });
     }
     return this;

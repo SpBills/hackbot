@@ -7,7 +7,7 @@ async function Hackbot() {
 
     this.db = await (require("./modules/db.js"))(this);
     this.context = require("./modules/context.js");
-    this.proxyService = new (require("./modules/proxy.js"))(this);
+    this.linkService = new (require("./modules/links.js"))(this);
 
     this.on = async function(type, args) {
         switch(type) {
@@ -15,6 +15,7 @@ async function Hackbot() {
                 ctx = new this.context(this, args);
                 command = await ctx.findCommand();
                 if (command) await ctx.execute(command);
+                else await this.linkService.executeLink(ctx);
                 break;
             }
             case "error": { console.log(`ERROR from ${args.source}: ${JSON.stringify(args.msg, null, 2)}`); break; }

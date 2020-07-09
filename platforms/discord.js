@@ -23,9 +23,9 @@ module.exports = function DiscordClient(bot) {
     this.client.on('error', (err) => this.bot.on('error', { msg: err, source: 'discord' }));
     this.client.connect().then();
     this.sendMessage = async (location, message) => await this.client.createMessage(location, message),
-    this.proxyMessage = async function(proxyInfo) {
-        webhook = await this.getWebhook(proxyInfo.location);
-        options = {content: proxyInfo.message, username: proxyInfo.author.name, avatarURL: proxyInfo.author.avatar, allowedMentions: {everyone: false}};
+    this.executeLink = async function(linkInfo) {
+        webhook = await this.getWebhook(linkInfo.location);
+        options = {content: linkInfo.message, username: linkInfo.author.name, avatarURL: linkInfo.author.avatar, allowedMentions: {everyone: false}};
         await this.client.executeWebhook(webhook.id, webhook.token, options);
     };
     this.getWebhook = async function(channel) {
@@ -35,7 +35,7 @@ module.exports = function DiscordClient(bot) {
             if (webhook) this.webhookCache[channel] = { id: webhook.id, token: webhook.token };
         }
         if (!webhook) {
-            webhook = await this.client.createChannelWebhook(channel, {name: "hackbot proxy webhook"});
+            webhook = await this.client.createChannelWebhook(channel, {name: "hackbot webhook"});
             this.webhookCache[channel] = { id: webhook.id, token: webhook.token };
         }
         return webhook;

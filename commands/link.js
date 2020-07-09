@@ -7,15 +7,15 @@ module.exports = {
         cmd = ctx.args.shift();
         switch(cmd) {
             case "info":
-                link = JSON.stringify(await ctx.bot.proxyService.getLinkFromLocation(ctx));
+                link = JSON.stringify(await ctx.bot.linkService.getLinkFromLocation(ctx));
                 await ctx.reply(link ? link : "No known links.");
                 break;
             case "create":
-                link = ctx.bot.proxyService.createLink(ctx);
+                link = ctx.bot.linkService.createLink(ctx);
                 await ctx.reply(`Created link with ID ${link.id}. Please use ${ctx.bot.config.prefix}link join to join other channels to this link.`);
                 break;
             case "join":
-                link = ctx.bot.proxyService.joinLink(ctx, ctx.args[0]);
+                link = ctx.bot.linkService.joinLink(ctx, ctx.args[0]);
                 await ctx.reply(`Joined link with ID ${link.id}.`)
                 break;
             default:
