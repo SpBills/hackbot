@@ -44,8 +44,6 @@ module.exports = async function(bot) {
     await this.pool.connect();
     await this.pool.query(db_init);
 
-    this.query = async function(queryString, args) {
-        return this.pool.query(queryString, args);
-    };
+    this.query = async (queryString, args) => await this.pool.query(queryString, args);
     return this;
 }

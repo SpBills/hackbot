@@ -20,7 +20,12 @@ module.exports = function MessageContext(bot, args) {
             if (command.permitted(this)) await command.execute(this);
             else throw { msg: "\u{0001f6d1} You are not permitted to run this command.", send: true, }
         } catch (e) {
-            if (e.send) await this.reply(e.msg);
+            if (command.name == "dev") {
+                if (e.hasOwnProperty("send")) await this.reply(e.msg);
+                else await this.reply(e.toString());
+            }
+            else if (e.send) await this.reply(e.msg);
+            else if (e.send == false) throw e;
             else await this.reply(`There was an error while processing this command. (${e}) Please contact the developer if this persists.`);
         }
     };

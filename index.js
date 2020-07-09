@@ -7,7 +7,7 @@ async function Hackbot() {
 
     this.db = await (require("./modules/db.js"))(this);
     this.context = require("./modules/context.js");
-    this.proxy = new (require("./modules/proxy.js"))(this);
+    this.proxyService = new (require("./modules/proxy.js"))(this);
 
     this.on = async function(type, args) {
         switch(type) {

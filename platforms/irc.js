@@ -6,7 +6,11 @@ module.exports = function ircClient(bot) {
     this.client.addListener('message', async (from, to, msg) => {
         message = {
             platform: "irc",
-            author: from,
+            author: {
+                id: from,
+                name: from,
+                avatar: null,
+            },
             content: msg,
             location: to,
             private: false,
