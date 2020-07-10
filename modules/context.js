@@ -1,26 +1,26 @@
 
-module.exports = function MessageContext(bot, args) {
+module.exports = function MessageContext(bot, msg) {
     this.bot = bot;
-    this.message = args.content;
-    this.author = args.author;
-    this.platform = args.platform;
-    this.location = args.location;
+    this.message = msg.content;
+    this.author = msg.author;
+    this.platform = msg.platform;
+    this.location = msg.location;
+    this.private = msg.private;
 
-    this.findCommand = async function() {
-        if (this.message.startsWith(bot.config.prefix)) {
-            this.args = message.content.slice(bot.config.prefix.length).split(" ");
-            return this.bot.commands[this.args.shift()];
-        }
-    };
+    if (this.message.startsWith(bot.config.prefix)) {
+        this.args = message.content.slice(bot.config.prefix.length).split(" ");
+        this.command = this.bot.commands[this.args.shift()];
+    }
+
     this.reply = async function(message) {
         this.bot.platforms[this.platform].sendMessage(this.location, message);
     };
-    this.execute = async function(command) {
+    this.execute = async function() {
         try {
-            if (command.permitted(this)) await command.execute(this);
+            if (this.command.permitted(this)) await this.command.execute(this);
             else throw { msg: "\u{0001f6d1} You are not permitted to run this command.", send: true, }
         } catch (e) {
-            if (command.name == "dev") {
+            if (this.command.name == "dev") {
                 if (e.hasOwnProperty("send")) await this.reply(e.msg);
                 else await this.reply(e.toString());
             }

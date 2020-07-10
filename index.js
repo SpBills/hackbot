@@ -1,27 +1,26 @@
 const sentry = require('@sentry/node');
 const fs = require("fs");
+const context = require('./modules/context');
 
 async function Hackbot() {
     this.config = require("./config.json");
     sentry.init({ dsn: this.config.sentryDsn });
 
     this.db = await (require("./modules/db.js"))(this);
-    this.context = require("./modules/context.js");
     this.linkService = new (require("./modules/links.js"))(this);
 
-    this.on = async function(type, args) {
+    this.on = async (type, args) => {
         switch(type) {
-            case "message": {
-                ctx = new this.context(this, args);
-                command = await ctx.findCommand();
-                if (command) await ctx.execute(command);
+            case "message":
+                ctx = new context(this, args);
+                if (ctx.command) await ctx.execute();
                 else await this.linkService.executeLink(ctx);
                 break;
-            }
-            case "error": { console.log(`ERROR from ${args.source}: ${JSON.stringify(args.msg, null, 2)}`); break; }
-            case "info": { console.log(`INFO from ${args.source}: ${JSON.stringify(args.msg, null, 2)}`); break; }
+            default:
+                console.log(`${type} from ${args.source}: ${JSON.stringify(args.msg, null, 2)}`); 
+                break;
         }
-    };
+    }
 
     // load commands
     this.commands = {};
