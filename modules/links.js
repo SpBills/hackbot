@@ -1,4 +1,3 @@
-const link = require("../commands/link");
 
 module.exports = function LinkService(bot) {
     this.bot = bot;
