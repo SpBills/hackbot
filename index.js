@@ -27,7 +27,7 @@ async function Hackbot() {
     this.commands = {};
     try {
         fs.readdirSync("./commands").forEach(f => {
-            this.commands[f.slice(0, -3)] = require(`./commands/${f}`);
+            if (this.config.hasOwnProperty(f)) this.commands[f.slice(0, -3)] = require(`./commands/${f}`);
         });
         this.on('info', { msg: "Succesfully loaded commands.", source: 'bot' });
     } catch (e) {
